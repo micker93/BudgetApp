@@ -50,9 +50,9 @@ public class MainActivity extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
 
                      value=dataSnapshot.getValue(Integer.class);
-                      textView.setText(String.valueOf(value + " Kr"));
+                     textView.setText(String.valueOf(value + " Kr"));
                      Budget= value;
-                   RedorGreen();
+                     RedorGreen();
             }
 
             @Override
@@ -77,17 +77,16 @@ public class MainActivity extends AppCompatActivity {
                 final EditText editbudget = new EditText(MainActivity.this);
                 editbudget.setInputType(InputType.TYPE_CLASS_NUMBER);
                 builder.setView(editbudget);
+                editbudget.setText("0");
                 builder.setPositiveButton("Klar", new DialogInterface.OnClickListener(){
 
                     public void onClick(DialogInterface dialog, int press){
 
-
                         TextView textView=(TextView)findViewById(R.id.budget);
-
                         String total=editbudget.getText().toString();
 
-                       Budget=Integer.valueOf(total);
-                       myRef.setValue(Budget);
+                        Budget=Integer.valueOf(total);
+                        myRef.setValue(Budget);
 
                         textView.setText(String.valueOf(Budget));
 
@@ -116,16 +115,15 @@ public class MainActivity extends AppCompatActivity {
         final EditText editbudget = new EditText(MainActivity.this);
         editbudget.setInputType(InputType.TYPE_CLASS_NUMBER);
         builder.setView(editbudget);
+        editbudget.setText("0");
         builder.setPositiveButton("Klar", new DialogInterface.OnClickListener(){
 
             public void onClick(DialogInterface dialog, int press){
 
                 TextView textView=(TextView)findViewById(R.id.budget);
-
                 String total=editbudget.getText().toString();
 
                 minus=Integer.valueOf(total);
-
                 totalafterminus=Budget-minus;
                 myRef.setValue(totalafterminus);
                 textView.setText(String.valueOf(totalafterminus));
@@ -165,4 +163,5 @@ public class MainActivity extends AppCompatActivity {
         else
             textView.setTextColor(Color.GREEN);
     }
+
 }
