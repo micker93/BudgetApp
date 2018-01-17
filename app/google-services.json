@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "562030023967",
+    "firebase_url": "https://budgetapp-87a57.firebaseio.com",
+    "project_id": "budgetapp-87a57",
+    "storage_bucket": "budgetapp-87a57.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:562030023967:android:34384468aa8d43ff",
+        "android_client_info": {
+          "package_name": "com.example.riiss.budgetapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "562030023967-m9gel9il0mft9hmrsvifgbn0ci1ep4cp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.riiss.budgetapp",
+            "certificate_hash": "0d530d986605f4645c4628e15fdeb27671a065f8"
+          }
+        },
+        {
+          "client_id": "562030023967-20ri9h1dcq5smopnkubct5venjeegota.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCh57Uw2v4oDonGRCOOHoVTgqktaOSqsM4"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "562030023967-20ri9h1dcq5smopnkubct5venjeegota.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
