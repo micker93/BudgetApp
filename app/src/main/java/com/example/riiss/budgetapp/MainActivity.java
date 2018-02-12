@@ -1,11 +1,18 @@
 package com.example.riiss.budgetapp;
 
+import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
+import android.os.Build;
+import android.provider.Settings;
+import android.renderscript.Sampler;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.NotificationManagerCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -27,12 +34,15 @@ public class MainActivity extends AppCompatActivity {
 
 
     private DatabaseReference mDatabase;
-    int Budget=0;
-    int minus=0;
-    int totalafterminus=0;
+    double Budget=0;
+    double minus=0;
+    double totalafterminus=0;
     int value=0;
+    double percentage =0;
+
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference myRef = database.getReference("Budget");
+    DatabaseReference myRefprocent = database.getReference("procent");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
 
         RedorGreen();
 
+
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -53,6 +64,7 @@ public class MainActivity extends AppCompatActivity {
                      textView.setText(String.valueOf(value + " Kr"));
                      Budget= value;
                      RedorGreen();
+
             }
 
             @Override
@@ -73,11 +85,11 @@ public class MainActivity extends AppCompatActivity {
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
                 builder.setTitle("Budget");
-                builder.setMessage("Skriv in din budget ");
+                builder.setMessage("Budget");
                 final EditText editbudget = new EditText(MainActivity.this);
                 editbudget.setInputType(InputType.TYPE_CLASS_NUMBER);
                 builder.setView(editbudget);
-                editbudget.setText("0");
+                editbudget.setHint("Skriv in din budget");
                 builder.setPositiveButton("Klar", new DialogInterface.OnClickListener(){
 
                     public void onClick(DialogInterface dialog, int press){
@@ -85,14 +97,16 @@ public class MainActivity extends AppCompatActivity {
                         TextView textView=(TextView)findViewById(R.id.budget);
                         String total=editbudget.getText().toString();
 
-                        Budget=Integer.valueOf(total);
+                        Budget=Double.valueOf(total);
+                        percentage=Budget / 10 ;
                         myRef.setValue(Budget);
+                        myRefprocent.setValue(percentage);
 
                         textView.setText(String.valueOf(Budget));
-
                         Toast.makeText(getApplicationContext(), "Ny budget: " + total,
                                 Toast.LENGTH_SHORT).show();
                                 RedorGreen();
+
                     }
                 });
 
@@ -109,19 +123,27 @@ public class MainActivity extends AppCompatActivity {
 
     public void avdrag(final View v){
 
+        if(percentage>value){
+
+            addNotification();
+
+        }
+
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
         builder.setTitle("Avdrag");
         builder.setMessage("Skriv in hur mycket du vill ta av budgeten ");
         final EditText editbudget = new EditText(MainActivity.this);
         editbudget.setInputType(InputType.TYPE_CLASS_NUMBER);
         builder.setView(editbudget);
-        editbudget.setText("0");
+        editbudget.setHint("avdrag av din budget");
         builder.setPositiveButton("Klar", new DialogInterface.OnClickListener(){
 
             public void onClick(DialogInterface dialog, int press){
 
                 TextView textView=(TextView)findViewById(R.id.budget);
                 String total=editbudget.getText().toString();
+
+
 
                 minus=Integer.valueOf(total);
                 totalafterminus=Budget-minus;
@@ -132,6 +154,8 @@ public class MainActivity extends AppCompatActivity {
                         Toast.LENGTH_SHORT).show();
                         RedorGreen();
 
+
+
             }
         });
 
@@ -139,18 +163,42 @@ public class MainActivity extends AppCompatActivity {
         builder.create();
         builder.show();
 
+
     }
 
     private void addNotification() {
 
-        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this);
+        String id="main_channel";
 
-        mBuilder.setSmallIcon(R.mipmap.ic_launcher);
-        mBuilder.setContentTitle("Notification Alert, Click Me!");
-        mBuilder.setContentText("Hi, This is Android Notification Detail!");
-        // Add as notification
-        NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        manager.notify(0, mBuilder.build());
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+
+        NotificationManager notificationManager=(NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        CharSequence name="Channel Name";
+        String desciption="Channgel Desc";
+        int importance=NotificationManager.IMPORTANCE_HIGH;
+
+            NotificationChannel notificationChannel= new NotificationChannel(id,name,importance);
+            notificationChannel.setDescription(desciption);
+            notificationChannel.enableLights(true);
+            notificationChannel.setLightColor(Color.WHITE);
+            notificationChannel.enableVibration(false);
+            if(notificationChannel !=null){
+
+                notificationManager.createNotificationChannel(notificationChannel);
+
+            }
+        }
+
+        NotificationCompat.Builder notifictaionbuilder= new NotificationCompat.Builder(this);
+        notifictaionbuilder.setSmallIcon(R.mipmap.ic_launcher);
+        notifictaionbuilder.setContentTitle("Varning!");
+        notifictaionbuilder.setContentText("Din budget är nästan slut " + totalafterminus + " KR kvar");
+        notifictaionbuilder.setLights(Color.WHITE,500,500);
+        notifictaionbuilder.setColor(Color.RED);
+        notifictaionbuilder.setDefaults(Notification.DEFAULT_SOUND);
+        NotificationManagerCompat notificationManagerCompat= NotificationManagerCompat.from(this);
+        notificationManagerCompat.notify(1000,notifictaionbuilder.build());
+
     }
 
     public void RedorGreen(){
@@ -163,5 +211,8 @@ public class MainActivity extends AppCompatActivity {
         else
             textView.setTextColor(Color.GREEN);
     }
+
+
+
 
 }
